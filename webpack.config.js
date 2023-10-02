@@ -1,6 +1,5 @@
 const path = require('path');
 const glob = require('glob');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env, args) => {
     /**
@@ -9,11 +8,7 @@ module.exports = (env, args) => {
      * */
     const sharedConfig = (entryName, bundleName) => ({
         entry: entryName,
-        // plugins: env && env.useBundleAnalyzer ? [
-            // new BundleAnalyzerPlugin({
-                // analyzerPort: 8000 + Math.round(Math.random() * 1000)
-            // })
-        // ] : [],
+        plugins: [],
         module: {
             rules: [{
                 test: /\.ts$/,
