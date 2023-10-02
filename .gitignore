@@ -1,5 +1,7 @@
 nogit/
 
+.DS_Store
+
 node_modules
 js
 debug.log
