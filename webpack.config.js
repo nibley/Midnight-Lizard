@@ -9,11 +9,11 @@ module.exports = (env, args) => {
      * */
     const sharedConfig = (entryName, bundleName) => ({
         entry: entryName,
-        plugins: env && env.useBundleAnalyzer ? [
-            new BundleAnalyzerPlugin({
-                analyzerPort: 8000 + Math.round(Math.random() * 1000)
-            })
-        ] : [],
+        // plugins: env && env.useBundleAnalyzer ? [
+            // new BundleAnalyzerPlugin({
+                // analyzerPort: 8000 + Math.round(Math.random() * 1000)
+            // })
+        // ] : [],
         module: {
             rules: [{
                 test: /\.ts$/,
