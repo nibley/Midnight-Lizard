@@ -28,33 +28,81 @@ module.exports = (env, args) => {
         }
     });
 
+
     const contentScriptConfig = sharedConfig(
         './ts/Chrome/ChromeContentScriptStarter.ts',
         'content-script.js');
 
-    const popupConfig = sharedConfig(
-        './ts/Chrome/ChromePopupStarter.ts',
-        'popup.js');
 
-    const backgroundPageConfig = sharedConfig(
-        './ts/Chrome/ChromeBackgroundPageStarter.ts',
-        'background-page.js');
+
+
+
+
+
+    // const popupConfig = sharedConfig(
+    //     './ts/Chrome/ChromePopupStarter.ts',
+    //     'popup.js');
+    
+    // SETTINGS_DISREGARD
+
+
+
+
+
+
+
+    // const backgroundPageConfig = sharedConfig(
+    //     './ts/Chrome/ChromeBackgroundPageStarter.ts',
+    //     'background-page.js');
+
+    // SETTINGS_DISREGARD
+
+
+
+
+
+
 
     const pageScriptConfig = sharedConfig(
         './ts/PageScript/PageScriptStarter.ts',
         'page-script.js');
 
-    const customEntries = glob.sync(path.resolve(__dirname, 'ts/Custom/*.ts'));
-    const customConfigs = [];
+    
 
-    for (const customTsFile of customEntries) {
-        customConfigs.push(sharedConfig(customTsFile,
-            `custom/${path.basename(customTsFile, '.ts')}.js`))
-    }
+
+
+
+
+    // const customEntries = glob.sync(path.resolve(__dirname, 'ts/Custom/*.ts'));
+    // const customConfigs = [];
+
+    // for (const customTsFile of customEntries) {
+    //     customConfigs.push(sharedConfig(customTsFile,
+    //         `custom/${path.basename(customTsFile, '.ts')}.js`))
+    // }
+
+    // SETTINGS_DISREGARD
+
+    
+
+
+
+
 
     return [
-        contentScriptConfig, popupConfig,
-        backgroundPageConfig, pageScriptConfig,
-        ...customConfigs
+        contentScriptConfig,
+        pageScriptConfig
+
+
+
+
+        // popupConfig,
+        // backgroundPageConfig,
+        // ...customConfigs
+
+        // SETTINGS_DISREGARD
+
+
+
     ];
 };
