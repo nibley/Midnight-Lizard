@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
-    "name": "Midnight Lizard",
-    "short_name": "Mid.Lizard",
+    "name": "portablelizard",
+    "short_name": "portablelizard",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
     "version": "10.7.0",
@@ -32,7 +32,7 @@
         }
     },
     "browser_action": {
-        "default_title": "Midnight Lizard",
+        "default_title": "portablelizard",
         "default_icon": {
             "38": "img/ml-toolbar-icon-38.png"
         },
