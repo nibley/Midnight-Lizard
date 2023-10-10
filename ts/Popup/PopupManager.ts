@@ -156,11 +156,11 @@ class PopupManager
         this._syncSettingsCheckBox = doc.getElementById("syncSettings") as HTMLInputElement;
         this._settingsForm = doc.getElementById("settingsForm") as HTMLFormElement;
 
-        this._settingsManager.getCurrentSorage().then(isSync =>
-        {
-            this._syncSettingsCheckBox.checked = isSync;
-            this._syncSettingsCheckBox.onchange = this.onSettingsSyncChanged.bind(this);
-        });
+        // this._settingsManager.getCurrentSorage().then(isSync =>
+        // {
+        //     this._syncSettingsCheckBox.checked = isSync;
+        //     this._syncSettingsCheckBox.onchange = this.onSettingsSyncChanged.bind(this);
+        // });
 
         const changeLogLink = doc.getElementById("change-log-link")!;
         changeLogLink.setAttribute("tooltip",
@@ -468,10 +468,10 @@ class PopupManager
 
     protected toggleIsEnabled()
     {
-        this.currentSiteSettings.isEnabled = this._isEnabledToggle.checked;
-        this._settingsManager
-            .toggleIsEnabled(this._isEnabledToggle.checked)
-            .catch(ex => alert(this._i18n.getMessage("toggleExtensionFailureMessage") + (ex.message || ex)));
+        // this.currentSiteSettings.isEnabled = this._isEnabledToggle.checked;
+        // this._settingsManager
+        //     .toggleIsEnabled(this._isEnabledToggle.checked)
+        //     .catch(ex => alert(this._i18n.getMessage("toggleExtensionFailureMessage") + (ex.message || ex)));
     }
 
     protected fillColorSchemesSelectLists()
@@ -553,9 +553,9 @@ class PopupManager
 
     protected onSettingsSyncChanged()
     {
-        this._settingsManager.toggleSync(this._syncSettingsCheckBox.checked)
-            .then(x => this.updateColorSchemeListsFromDefaultSettings())
-            .catch(ex => alert(this._i18n.getMessage("syncChangeFailureMessage") + (ex.message || ex)));
+        // this._settingsManager.toggleSync(this._syncSettingsCheckBox.checked)
+            // .then(x => this.updateColorSchemeListsFromDefaultSettings())
+            // .catch(ex => alert(this._i18n.getMessage("syncChangeFailureMessage") + (ex.message || ex)));
     }
 
     protected updateColorSchemeButtons()
@@ -757,14 +757,14 @@ class PopupManager
 
     protected forgetAllSitesSettings()
     {
-        if (confirm(this._i18n.getMessage("forgetAllConfirmationMessage")))
-        {
-            this._settingsManager
-                .deleteAllSettings()
-                .then(x => this.updateButtonStates())
-                .catch(ex => alert(this._i18n.getMessage("forgetAllFailureMessage") + (ex.message || ex)));
-        }
-        return false;
+        // if (confirm(this._i18n.getMessage("forgetAllConfirmationMessage")))
+        // {
+        //     this._settingsManager
+        //         .deleteAllSettings()
+        //         .then(x => this.updateButtonStates())
+        //         .catch(ex => alert(this._i18n.getMessage("forgetAllFailureMessage") + (ex.message || ex)));
+        // }
+        // return false;
     }
 
     protected forgetCurrentSiteSettings()
@@ -778,11 +778,11 @@ class PopupManager
 
     protected deleteAllWebsitesSettings()
     {
-        this._settingsManager
-            .deleteAllWebsitesSettings()
-            .catch(ex => alert(this._i18n.getMessage("deleteAllWebsitesSettingsFailureMessage") +
-                (ex.message || ex)));
-        setTimeout(() => this._popup.location.reload(), 100);
+    //     this._settingsManager
+    //         .deleteAllWebsitesSettings()
+    //         .catch(ex => alert(this._i18n.getMessage("deleteAllWebsitesSettingsFailureMessage") +
+    //             (ex.message || ex)));
+    //     setTimeout(() => this._popup.location.reload(), 100);
         return false;
     }
 

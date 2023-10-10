@@ -33,17 +33,17 @@ export abstract class IPopupSettingsManager
     abstract getDefaultSettingsCache(): ColorScheme;
     abstract setAsDefaultSettings(): Promise<ColorScheme>;
     abstract changeDefaultSettings(settings: ColorScheme, changeUnderlyingColorScheme: boolean): Promise<ColorScheme>;
-    abstract toggleIsEnabled(isEnabled: boolean): Promise<null>;
+    // abstract toggleIsEnabled(isEnabled: boolean): Promise<null>;
     abstract changeSettings(newSettings: ColorScheme): void;
     abstract applySettings(): Promise<ColorScheme>;
-    abstract deleteAllSettings(): Promise<null>;
+    // abstract deleteAllSettings(): Promise<null>;
     abstract deleteCurrentSiteSettings(): Promise<null>;
-    abstract deleteAllWebsitesSettings(): Promise<null>;
+    // abstract deleteAllWebsitesSettings(): Promise<null>;
     abstract saveUserColorScheme(userColorScheme: ColorScheme): Promise<null>;
     abstract deleteUserColorScheme(colorSchemeId: ColorSchemeId): Promise<null>;
     abstract settingsAreEqual(first: ColorScheme, second: ColorScheme): boolean;
-    abstract toggleSync(value: boolean): Promise<null>;
-    abstract getCurrentSorage(): Promise<boolean>;
+    // abstract toggleSync(value: boolean): Promise<null>;
+    // abstract getCurrentSorage(): Promise<boolean>;
     abstract get currentTabIsAccessible(): boolean;
     abstract get currentSiteSettings(): ColorScheme;
     abstract set currentSiteSettings(settings: ColorScheme);
@@ -99,10 +99,10 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
         }
     }
 
-    public getCurrentSorage()
-    {
-        return this._storageManager.getCurrentStorage().then(storType => storType === "sync");
-    }
+    // public getCurrentSorage()
+    // {
+    //     return this._storageManager.getCurrentStorage().then(storType => storType === "sync");
+    // }
 
     public getDefaultSettingsCache(): ColorScheme
     {
@@ -115,16 +115,16 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
         return this._onSettingsInitializationFailed.event;
     }
 
-    public toggleIsEnabled(isEnabled: boolean): Promise<null>
-    {
-        this._currentSettings.isEnabled = isEnabled;
+    // public toggleIsEnabled(isEnabled: boolean): Promise<null>
+    // {
+    //     this._currentSettings.isEnabled = isEnabled;
         // this._settingsBus.toggleIsEnabled(isEnabled)
         //     .then(tabRequests => tabRequests
         //         .forEach(req => req
         //             .catch(ex => this._app.isDebug && console.error("Toggle request to the tab faild with: " + ex.message || ex))));
-        this._onSettingsChanged.raise(x => { }, this._shift);
-        return this._storageManager.set({ isEnabled: isEnabled });
-    }
+        // this._onSettingsChanged.raise(x => { }, this._shift);
+        // return this._storageManager.set({ isEnabled: isEnabled });
+    // }
 
     public async setAsDefaultSettings()
     {
@@ -147,7 +147,7 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
                 this.saveUserColorScheme(underlyingColorScheme);
             }
         }
-        await this._storageManager.set(this._defaultSettings);
+        // await this._storageManager.set(this._defaultSettings);
         this.renameSettingsToDefault(this._defaultSettings);
         Object.assign(ColorSchemes.default, this._defaultSettings);
         if (this.currentSettings.colorSchemeId === ColorSchemes.default.colorSchemeId)
@@ -159,10 +159,10 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
         return this._defaultSettings;
     }
 
-    public deleteAllSettings()
-    {
-        return this._storageManager.clear();
-    }
+    // public deleteAllSettings()
+    // {
+        // return this._storageManager.clear();
+    // }
 
     public deleteCurrentSiteSettings()
     {
@@ -170,17 +170,17 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
         return new Promise<null>((resolve) => { resolve(null); });
     }
 
-    public async deleteAllWebsitesSettings()
-    {
-        const storage: any = await this._storageManager.get(null);
-        return this._storageManager.remove(
-            Object.keys(storage).filter(x => x.startsWith("ws:")));
-    }
+    // public async deleteAllWebsitesSettings()
+    // {
+    //     const storage: any = await this._storageManager.get(null);
+    //     return this._storageManager.remove(
+    //         Object.keys(storage).filter(x => x.startsWith("ws:")));
+    // }
 
-    public toggleSync(value: boolean): Promise<null>
-    {
-        return this._storageManager.toggleSync(value);
-    }
+    // public toggleSync(value: boolean): Promise<null>
+    // {
+    //     return this._storageManager.toggleSync(value);
+    // }
 
     public applySettings()
     {
