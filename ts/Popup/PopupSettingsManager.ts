@@ -118,10 +118,10 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
     public toggleIsEnabled(isEnabled: boolean): Promise<null>
     {
         this._currentSettings.isEnabled = isEnabled;
-        this._settingsBus.toggleIsEnabled(isEnabled)
-            .then(tabRequests => tabRequests
-                .forEach(req => req
-                    .catch(ex => this._app.isDebug && console.error("Toggle request to the tab faild with: " + ex.message || ex))));
+        // this._settingsBus.toggleIsEnabled(isEnabled)
+        //     .then(tabRequests => tabRequests
+        //         .forEach(req => req
+        //             .catch(ex => this._app.isDebug && console.error("Toggle request to the tab faild with: " + ex.message || ex))));
         this._onSettingsChanged.raise(x => { }, this._shift);
         return this._storageManager.set({ isEnabled: isEnabled });
     }
@@ -166,7 +166,8 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
 
     public deleteCurrentSiteSettings()
     {
-        return this._settingsBus.deleteSettings();
+        // return this._settingsBus.deleteSettings();
+        return new Promise<null>((resolve) => { resolve(null); });
     }
 
     public async deleteAllWebsitesSettings()
@@ -195,7 +196,9 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
         {
             settings.colorSchemeId = ColorSchemes.default.colorSchemeId;
         }
-        return this._settingsBus.applySettings(settings);
+        
+        // return this._settingsBus.applySettings(settings);
+        return new Promise<ColorScheme>((resolve) => { resolve({} as ColorScheme); });
     }
 
     public changeSettings(newSettings: ColorScheme)
