@@ -27,6 +27,10 @@ export class ChromeApplicationInstaller implements IApplicationInstaller
                 .query({})
                 .then(tabs => tabs.map(tab =>
                 {
+                    if (!tab || !tab.url) {
+                        return;
+                    }
+
                     for (const css of mainInjection.css!)
                     {
                         this._chromePromise.tabs
