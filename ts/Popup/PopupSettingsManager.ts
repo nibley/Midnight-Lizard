@@ -76,18 +76,13 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
     {
         try
         {
-            let [currentSettings, defaultSettings] = await Promise.all([
-                this._settingsBus.getCurrentSettings().catch(ex => (this._app.isDebug && console.error(ex)) as never),
-                this.getDefaultSettings()]);
-            if (!currentSettings)
-            {
-                currentSettings = {
-                    ...defaultSettings,
-                    location: "http://" + ColorSchemes.default.colorSchemeName.toLowerCase()
-                };
-                this._currentTabIsAccessible = false;
-            }
-            this._currentSettings = currentSettings;
+            let defaultSettings = await this.getDefaultSettings();
+            let currentSettings = {
+                ...defaultSettings,
+                location: "http://" + ColorSchemes.default.colorSchemeName.toLowerCase()
+            };
+            this._currentTabIsAccessible = false;
+
             this.updateSchedule();
             this.initCurSet();
             this._currentSiteSettings = { ...currentSettings };
