@@ -3,7 +3,7 @@ import { ArgumentedEvent, ResponsiveEvent } from "../Events/Event";
 import { injectable, Scope } from "../Utils/DI";
 import { IBaseSettingsManager, BaseSettingsManager } from "../Settings/BaseSettingsManager";
 import { IApplicationSettings } from "../Settings/IApplicationSettings";
-import { IStorageManager } from "../Settings/IStorageManager";
+// import { IStorageManager } from "../Settings/IStorageManager";
 import { ISettingsBus } from "../Settings/ISettingsBus";
 import { IMatchPatternProcessor } from "../Settings/MatchPatternProcessor";
 import { IRecommendations } from "../Settings/Recommendations";
@@ -11,6 +11,8 @@ import { ColorSchemes, ColorSchemeId, CustomColorSchemeId } from "../Settings/Co
 import { ComponentShift } from "../Colors/ComponentShift";
 import { ITranslationAccessor } from "../i18n/ITranslationAccessor";
 import { HtmlEvent } from '../Events/HtmlEvent';
+
+import { dimmedDustDefaultShim } from "../SHIM/Shim";
 
 type AnyResponse = (args: any) => void;
 type ColorSchemeResponse = (settings: ColorScheme) => void;
@@ -43,18 +45,18 @@ class SettingsManager extends BaseSettingsManager implements ISettingsManager
     constructor(
         _rootDocument: Document,
         app: IApplicationSettings,
-        storageManager: IStorageManager,
+        // storageManager: IStorageManager,
         settingsBus: ISettingsBus,
         matchPatternProcessor: IMatchPatternProcessor,
         i18n: ITranslationAccessor,
         rec: IRecommendations)
     {
-        super(_rootDocument, app, storageManager, settingsBus, matchPatternProcessor, i18n, rec);
+        super(_rootDocument, app, /*storageManager,*/ settingsBus, matchPatternProcessor, i18n, rec);
         settingsBus.onCurrentSettingsRequested.addListener(this.onCurrentSettingsRequested, this);
         settingsBus.onIsEnabledToggleRequested.addListener(this.onIsEnabledToggleRequested, this);
         settingsBus.onNewSettingsApplicationRequested.addListener(this.onNewSettingsApplicationRequested, this);
-        settingsBus.onSettingsDeletionRequested.addListener(this.onSettingsDeletionRequested, this);
-        storageManager.onStorageChanged.addListener(this.onStorageChanged, this);
+        // settingsBus.onSettingsDeletionRequested.addListener(this.onSettingsDeletionRequested, this);
+        // storageManager.onStorageChanged.addListener(this.onStorageChanged, this);
     }
 
     protected initCurSet()
@@ -94,15 +96,13 @@ class SettingsManager extends BaseSettingsManager implements ISettingsManager
 
     protected async initCurrentSettings()
     {
-        const storage = {
-            ...ColorSchemes.default,
-            ...ColorSchemes.dimmedDust,
-            ...{ [this._settingsKey]: {} }
-        };
-
         try
         {
-            const defaultSettings = await this._storageManager.get(storage);
+            const defaultSettings = {
+                ...dimmedDustDefaultShim,
+                ...{ [this._settingsKey]: {} }
+            };
+            // const defaultSettings = await this._storageManager.get(storage);
             const settings = (defaultSettings as any)[this._settingsKey] as ColorScheme;
             delete (defaultSettings as any)[this._settingsKey];
             await this.processDefaultSettings(defaultSettings, true);
@@ -128,22 +128,22 @@ class SettingsManager extends BaseSettingsManager implements ISettingsManager
         }
     }
 
-    protected async onSettingsDeletionRequested(response: AnyResponse)
-    {
-        if (window.top === window.self)
-        {
-            response(null);
-        }
-        if (this.isSelfMaintainable)
-        {
-            await this._storageManager.remove(this._settingsKey);
-        }
-    }
+    // protected async onSettingsDeletionRequested(response: AnyResponse)
+    // {
+    //     if (window.top === window.self)
+    //     {
+    //         response(null);
+    //     }
+    //     if (this.isSelfMaintainable)
+    //     {
+    //         await this._storageManager.remove(this._settingsKey);
+    //     }
+    // }
 
     protected onNewSettingsApplicationRequested(response: AnyResponse, newSettings?: ColorScheme)
     {
         this._currentSettings = newSettings!;
-        this.saveCurrentSettings();
+        // this.saveCurrentSettings();
         this.updateSchedule();
         this.initCurSet();
         this._onSettingsChanged.raise(response, this._shift);
@@ -210,51 +210,51 @@ class SettingsManager extends BaseSettingsManager implements ISettingsManager
         return window.top === window.self || !hasAccessToMainFrame;
     }
 
-    protected async saveCurrentSettings()
-    {
-        if (this.isSelfMaintainable)
-        {
-            try
-            {
-                this.skipOneSettingsUpdate = true;
-                if (this._currentSettings.colorSchemeId === ColorSchemes.default.colorSchemeId)
-                {
-                    await this._storageManager.set({
-                        [this._settingsKey]: {
-                            runOnThisSite: this._currentSettings.runOnThisSite
-                        }
-                    });
-                }
-                else if (this._currentSettings.colorSchemeId && this._currentSettings.colorSchemeId !== CustomColorSchemeId)
-                {
-                    await this._storageManager.set({
-                        [this._settingsKey]: {
-                            colorSchemeId: this._currentSettings.colorSchemeId,
-                            runOnThisSite: this._currentSettings.runOnThisSite
-                        }
-                    });
-                }
-                else
-                {
-                    let setting: ColorSchemePropertyName;
-                    const forSave = {} as any;
-                    for (setting in this._currentSettings)
-                    {
-                        if (excludeSettingsForSave.indexOf(setting) == -1)
-                        {
-                            forSave[setting] = this._currentSettings[setting];
-                        }
-                    }
-                    await this._storageManager.set({ [this._settingsKey]: forSave });
-                }
-            }
-            catch (error)
-            {
-                const reason = await this.getErrorReason(error);
-                alert("Midnight Lizard\n" + this._i18n.getMessage("applyOnPageFailureMessage") + reason);
-            }
-        }
-    }
+    // protected async saveCurrentSettings()
+    // {
+    //     if (this.isSelfMaintainable)
+    //     {
+    //         try
+    //         {
+    //             this.skipOneSettingsUpdate = true;
+    //             if (this._currentSettings.colorSchemeId === ColorSchemes.default.colorSchemeId)
+    //             {
+    //                 await this._storageManager.set({
+    //                     [this._settingsKey]: {
+    //                         runOnThisSite: this._currentSettings.runOnThisSite
+    //                     }
+    //                 });
+    //             }
+    //             else if (this._currentSettings.colorSchemeId && this._currentSettings.colorSchemeId !== CustomColorSchemeId)
+    //             {
+    //                 await this._storageManager.set({
+    //                     [this._settingsKey]: {
+    //                         colorSchemeId: this._currentSettings.colorSchemeId,
+    //                         runOnThisSite: this._currentSettings.runOnThisSite
+    //                     }
+    //                 });
+    //             }
+    //             else
+    //             {
+    //                 let setting: ColorSchemePropertyName;
+    //                 const forSave = {} as any;
+    //                 for (setting in this._currentSettings)
+    //                 {
+    //                     if (excludeSettingsForSave.indexOf(setting) == -1)
+    //                     {
+    //                         forSave[setting] = this._currentSettings[setting];
+    //                     }
+    //                 }
+    //                 await this._storageManager.set({ [this._settingsKey]: forSave });
+    //             }
+    //         }
+    //         catch (error)
+    //         {
+    //             const reason = await this.getErrorReason(error);
+    //             alert("Midnight Lizard\n" + this._i18n.getMessage("applyOnPageFailureMessage") + reason);
+    //         }
+    //     }
+    // }
 
     protected getSettingNameForCookies(propertyName: ColorSchemePropertyName)
     {

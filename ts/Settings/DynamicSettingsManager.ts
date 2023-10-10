@@ -2,7 +2,7 @@ import { injectable } from "../Utils/DI";
 import { IBaseSettingsManager, BaseSettingsManager } from "./BaseSettingsManager";
 import { ColorScheme } from "./ColorScheme";
 import { IApplicationSettings } from "./IApplicationSettings";
-import { IStorageManager } from "./IStorageManager";
+// import { IStorageManager } from "./IStorageManager";
 import { ISettingsBus } from "./ISettingsBus";
 import { IMatchPatternProcessor } from "./MatchPatternProcessor";
 import { IRecommendations } from "./Recommendations";
@@ -18,13 +18,13 @@ class DynamicSettingsManager extends BaseSettingsManager implements IDynamicSett
 {
     constructor(rootDocument: Document,
         app: IApplicationSettings,
-        storageManager: IStorageManager,
+        // storageManager: IStorageManager,
         settingsBus: ISettingsBus,
         matchPatternProcessor: IMatchPatternProcessor,
         i18n: ITranslationAccessor,
         rec: IRecommendations)
     {
-        super(rootDocument, app, storageManager, settingsBus, matchPatternProcessor, i18n, rec);
+        super(rootDocument, app, /*storageManager,*/ settingsBus, matchPatternProcessor, i18n, rec);
         this.isInit = true
     }
 

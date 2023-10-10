@@ -8,12 +8,14 @@ import { ArgumentedEventDispatcher, ResponsiveEventDispatcher } from "../Events/
 import { ColorSchemeId, ColorSchemes, DefaultColorSchemes, CustomColorSchemeId } from "./ColorSchemes";
 import { ComponentShift } from "../Colors/ComponentShift";
 import { IApplicationSettings } from "./IApplicationSettings";
-import { IStorageManager, StorageLimits } from "./IStorageManager";
+// import { IStorageManager, StorageLimits } from "./IStorageManager";
 import { ISettingsBus } from "./ISettingsBus";
 import { IMatchPatternProcessor } from "./MatchPatternProcessor";
 import { ITranslationAccessor } from "../i18n/ITranslationAccessor";
 import { IRecommendations } from "./Recommendations";
 import { isNum } from "../Utils/TypeGuards";
+
+import { dimmedDustDefaultShim } from "../SHIM/Shim";
 
 type ArgEvent<TRequestArgs> = ArgumentedEvent<TRequestArgs>;
 type RespEvent<TResponseMethod extends Function, TRequestArgs> = ResponsiveEvent<TResponseMethod, TRequestArgs>;
@@ -128,7 +130,7 @@ export abstract class BaseSettingsManager implements IBaseSettingsManager
     constructor(
         protected readonly _rootDocument: Document,
         protected readonly _app: IApplicationSettings,
-        protected readonly _storageManager: IStorageManager,
+        // protected readonly _storageManager: IStorageManager,
         protected readonly _settingsBus: ISettingsBus,
         protected readonly _matchPatternProcessor: IMatchPatternProcessor,
         protected readonly _i18n: ITranslationAccessor,
@@ -587,17 +589,15 @@ export abstract class BaseSettingsManager implements IBaseSettingsManager
 
     public async getDefaultSettings(renameToDefault: boolean = true)
     {
-        const defaultSettings = await this._storageManager.get({
-            ...ColorSchemes.default,
-            ...ColorSchemes.dimmedDust
-        });
+        const defaultSettings = dimmedDustDefaultShim;
+
         await this.processDefaultSettings(defaultSettings, renameToDefault);
         return this._defaultSettings;
     }
 
     protected async processDefaultSettings(defaultSettings: ColorScheme, renameToDefault: boolean)
     {
-        await this.applyUserColorSchemesFromStorage(defaultSettings);
+        // await this.applyUserColorSchemesFromStorage(defaultSettings);
         this.assignSettings(this._defaultSettings, defaultSettings);
         Object.assign(this._defaultSettings, {
             changeBrowserTheme: defaultSettings.changeBrowserTheme,
@@ -647,99 +647,99 @@ export abstract class BaseSettingsManager implements IBaseSettingsManager
         this.renameSettingsToDefault(ColorSchemes.default);
     }
 
-    private async applyUserColorSchemesFromStorage(defaultSettings: ColorScheme)
-    {
-        if (defaultSettings.userColorSchemeIds && defaultSettings.userColorSchemeIds.length > 0)
-        {
-            const userColorSchemeIds = defaultSettings.userColorSchemeIds.reduce((all, id) =>
-            {
-                all[`cs:${id}`] = { colorSchemeId: "none" };
-                return all;
-            }, {} as any);
+    // private async applyUserColorSchemesFromStorage(defaultSettings: ColorScheme)
+    // {
+    //     if (defaultSettings.userColorSchemeIds && defaultSettings.userColorSchemeIds.length > 0)
+    //     {
+    //         const userColorSchemeIds = defaultSettings.userColorSchemeIds.reduce((all, id) =>
+    //         {
+    //             all[`cs:${id}`] = { colorSchemeId: "none" };
+    //             return all;
+    //         }, {} as any);
 
-            const userColorSchemesStore = Object.values<ColorScheme>(await this._storageManager.get(userColorSchemeIds))
-                .sort((a, b) => a.colorSchemeName ? a.colorSchemeName.localeCompare(b.colorSchemeName) : 0);
+    //         const userColorSchemesStore = Object.values<ColorScheme>(await this._storageManager.get(userColorSchemeIds))
+    //             .sort((a, b) => a.colorSchemeName ? a.colorSchemeName.localeCompare(b.colorSchemeName) : 0);
 
-            for (const key in userColorSchemesStore)
-            {
-                const userColorScheme: ColorScheme = userColorSchemesStore[key];
-                if (userColorScheme && userColorScheme.colorSchemeId !== "none" as any)
-                {
-                    this.applyBackwardCompatibility(userColorScheme);
-                    ColorSchemes[userColorScheme.colorSchemeId] =
-                        Object.assign(ColorSchemes[userColorScheme.colorSchemeId] || {}, userColorScheme);
-                }
-            }
-        }
+    //         for (const key in userColorSchemesStore)
+    //         {
+    //             const userColorScheme: ColorScheme = userColorSchemesStore[key];
+    //             if (userColorScheme && userColorScheme.colorSchemeId !== "none" as any)
+    //             {
+    //                 this.applyBackwardCompatibility(userColorScheme);
+    //                 ColorSchemes[userColorScheme.colorSchemeId] =
+    //                     Object.assign(ColorSchemes[userColorScheme.colorSchemeId] || {}, userColorScheme);
+    //             }
+    //         }
+    //     }
 
-        Object.assign(ColorSchemes.default, defaultSettings.colorSchemeId ? defaultSettings : ColorSchemes.dimmedDust);
-        this.renameSettingsToDefault(ColorSchemes.default);
-    }
+    //     Object.assign(ColorSchemes.default, defaultSettings.colorSchemeId ? defaultSettings : ColorSchemes.dimmedDust);
+    //     this.renameSettingsToDefault(ColorSchemes.default);
+    // }
 
-    public async saveUserColorScheme(userColorScheme: ColorScheme): Promise<null>
-    {
-        const storage = await this._storageManager
-            .get<PartialColorScheme>({
-                userColorSchemes: [],
-                userColorSchemeIds: []
-            });
+    // public async saveUserColorScheme(userColorScheme: ColorScheme): Promise<null>
+    // {
+    //     const storage = await this._storageManager
+    //         .get<PartialColorScheme>({
+    //             userColorSchemes: [],
+    //             userColorSchemeIds: []
+    //         });
 
-        if (storage.userColorSchemes && storage.userColorSchemes.length > 0)
-        {
-            for (const oldUserColorScheme of storage.userColorSchemes)
-            {
-                this.putUserColorSchemeIntoStorage(storage, oldUserColorScheme);
-            }
-            delete storage.userColorSchemes;
-            await this._storageManager.remove('userColorSchemes' as keyof typeof storage);
-        }
+    //     if (storage.userColorSchemes && storage.userColorSchemes.length > 0)
+    //     {
+    //         for (const oldUserColorScheme of storage.userColorSchemes)
+    //         {
+    //             this.putUserColorSchemeIntoStorage(storage, oldUserColorScheme);
+    //         }
+    //         delete storage.userColorSchemes;
+    //         await this._storageManager.remove('userColorSchemes' as keyof typeof storage);
+    //     }
 
-        this.putUserColorSchemeIntoStorage(storage, userColorScheme);
-        return this._storageManager.set(storage);
-    }
+    //     this.putUserColorSchemeIntoStorage(storage, userColorScheme);
+    //     return this._storageManager.set(storage);
+    // }
 
-    protected putUserColorSchemeIntoStorage(storage: PartialColorScheme, userColorScheme: ColorScheme)
-    {
-        if (!storage.userColorSchemeIds!
-            .find(id => id === userColorScheme.colorSchemeId))
-        {
-            storage.userColorSchemeIds!.push(userColorScheme.colorSchemeId);
-        }
-        (storage as any)[`cs:${userColorScheme.colorSchemeId}`] = userColorScheme;
-    }
+    // protected putUserColorSchemeIntoStorage(storage: PartialColorScheme, userColorScheme: ColorScheme)
+    // {
+    //     if (!storage.userColorSchemeIds!
+    //         .find(id => id === userColorScheme.colorSchemeId))
+    //     {
+    //         storage.userColorSchemeIds!.push(userColorScheme.colorSchemeId);
+    //     }
+    //     (storage as any)[`cs:${userColorScheme.colorSchemeId}`] = userColorScheme;
+    // }
 
-    public async deleteUserColorScheme(colorSchemeId: ColorSchemeId): Promise<null>
-    {
-        const storage = await this._storageManager
-            .get<PartialColorScheme>({
-                userColorSchemes: [],
-                userColorSchemeIds: []
-            });
-        if (storage.userColorSchemes && storage.userColorSchemes.length > 0)
-        {
-            let existingSchemeIndex = storage.userColorSchemes
-                .findIndex(sch => sch.colorSchemeId === colorSchemeId);
-            if (existingSchemeIndex > -1)
-            {
-                storage.userColorSchemes.splice(existingSchemeIndex, 1);
-            }
-        }
-        else
-        {
-            delete storage.userColorSchemes;
-        }
-        if (storage.userColorSchemeIds && storage.userColorSchemeIds.length > 0)
-        {
-            let existingSchemeIdIndex = storage.userColorSchemeIds
-                .findIndex(id => id === colorSchemeId);
-            if (existingSchemeIdIndex > -1)
-            {
-                storage.userColorSchemeIds.splice(existingSchemeIdIndex, 1);
-            }
-        }
-        await this._storageManager.remove(`cs:${colorSchemeId}`);
-        return await this._storageManager.set(storage);
-    }
+    // public async deleteUserColorScheme(colorSchemeId: ColorSchemeId): Promise<null>
+    // {
+    //     const storage = await this._storageManager
+    //         .get<PartialColorScheme>({
+    //             userColorSchemes: [],
+    //             userColorSchemeIds: []
+    //         });
+    //     if (storage.userColorSchemes && storage.userColorSchemes.length > 0)
+    //     {
+    //         let existingSchemeIndex = storage.userColorSchemes
+    //             .findIndex(sch => sch.colorSchemeId === colorSchemeId);
+    //         if (existingSchemeIndex > -1)
+    //         {
+    //             storage.userColorSchemes.splice(existingSchemeIndex, 1);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         delete storage.userColorSchemes;
+    //     }
+    //     if (storage.userColorSchemeIds && storage.userColorSchemeIds.length > 0)
+    //     {
+    //         let existingSchemeIdIndex = storage.userColorSchemeIds
+    //             .findIndex(id => id === colorSchemeId);
+    //         if (existingSchemeIdIndex > -1)
+    //         {
+    //             storage.userColorSchemeIds.splice(existingSchemeIdIndex, 1);
+    //         }
+    //     }
+    //     await this._storageManager.remove(`cs:${colorSchemeId}`);
+    //     return await this._storageManager.set(storage);
+    // }
 
     protected assignSettings(to: ColorScheme, settings: ColorScheme)
     {
@@ -797,19 +797,19 @@ export abstract class BaseSettingsManager implements IBaseSettingsManager
     public async getErrorReason(error: any): Promise<string>
     {
         var result = (typeof error === 'string' ? error : error.message as string) || '';
-        const storage = await this._storageManager.getCurrentStorage();
+        // const storage = await this._storageManager.getCurrentStorage();
 
-        let limit: keyof typeof StorageLimits;
-        for (limit in StorageLimits)
-        {
-            if (new RegExp(`\\b${limit}\\b`, 'gi').test(result))
-            {
-                result = this._i18n.getMessage(`${storage}Storage_${limit}_ErrorMessage`,
-                    this._app.getStorageLimits(storage, limit as StorageLimits).toString())
-                    || result;
-                break;
-            }
-        }
+        // let limit: keyof typeof StorageLimits;
+        // for (limit in StorageLimits)
+        // {
+        //     if (new RegExp(`\\b${limit}\\b`, 'gi').test(result))
+        //     {
+        //         result = this._i18n.getMessage(`${storage}Storage_${limit}_ErrorMessage`,
+        //             this._app.getStorageLimits(storage, limit as StorageLimits).toString())
+        //             || result;
+        //         break;
+        //     }
+        // }
 
         return result;
     }

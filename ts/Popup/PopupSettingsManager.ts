@@ -6,7 +6,7 @@ import { ColorSchemeId, ColorSchemes, CustomColorSchemeId } from "../Settings/Co
 import { injectable, Scope } from "../Utils/DI";
 import { IBaseSettingsManager, BaseSettingsManager } from "../Settings/BaseSettingsManager";
 import { IApplicationSettings } from "../Settings/IApplicationSettings";
-import { IStorageManager } from "../Settings/IStorageManager";
+// import { IStorageManager } from "../Settings/IStorageManager";
 import { ISettingsBus } from "../Settings/ISettingsBus";
 import { IMatchPatternProcessor } from "../Settings/MatchPatternProcessor";
 import { IRecommendations } from "../Settings/Recommendations";
@@ -39,8 +39,8 @@ export abstract class IPopupSettingsManager
     // abstract deleteAllSettings(): Promise<null>;
     abstract deleteCurrentSiteSettings(): Promise<null>;
     // abstract deleteAllWebsitesSettings(): Promise<null>;
-    abstract saveUserColorScheme(userColorScheme: ColorScheme): Promise<null>;
-    abstract deleteUserColorScheme(colorSchemeId: ColorSchemeId): Promise<null>;
+    // abstract saveUserColorScheme(userColorScheme: ColorScheme): Promise<null>;
+    // abstract deleteUserColorScheme(colorSchemeId: ColorSchemeId): Promise<null>;
     abstract settingsAreEqual(first: ColorScheme, second: ColorScheme): boolean;
     // abstract toggleSync(value: boolean): Promise<null>;
     // abstract getCurrentSorage(): Promise<boolean>;
@@ -63,13 +63,13 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
 
     constructor(rootDocument: Document,
         app: IApplicationSettings,
-        storageManager: IStorageManager,
+        // storageManager: IStorageManager,
         settingsBus: ISettingsBus,
         matchPatternProcessor: IMatchPatternProcessor,
         i18n: ITranslationAccessor,
         rec: IRecommendations)
     {
-        super(rootDocument, app, storageManager, settingsBus, matchPatternProcessor, i18n, rec);
+        super(rootDocument, app, /*storageManager,*/ settingsBus, matchPatternProcessor, i18n, rec);
     }
 
     protected async initCurrentSettings()
@@ -137,15 +137,15 @@ class PopupSettingsManager extends BaseSettingsManager implements IPopupSettings
         this._defaultSettings = Object.assign(this._defaultSettings, settings);
         if (changeUnderlyingColorScheme && this._defaultSettings.colorSchemeId !== CustomColorSchemeId)
         {
-            const underlyingColorScheme = ColorSchemes[this._defaultSettings.colorSchemeId];
-            if (underlyingColorScheme)
-            {
-                // global settings from default color scheme
-                underlyingColorScheme.scheduleStartHour = settings.scheduleStartHour;
-                underlyingColorScheme.scheduleFinishHour = settings.scheduleFinishHour;
-                underlyingColorScheme.useDefaultSchedule = settings.useDefaultSchedule;
-                this.saveUserColorScheme(underlyingColorScheme);
-            }
+            // const underlyingColorScheme = ColorSchemes[this._defaultSettings.colorSchemeId];
+            // if (underlyingColorScheme)
+            // {
+            //     // global settings from default color scheme
+            //     underlyingColorScheme.scheduleStartHour = settings.scheduleStartHour;
+            //     underlyingColorScheme.scheduleFinishHour = settings.scheduleFinishHour;
+            //     underlyingColorScheme.useDefaultSchedule = settings.useDefaultSchedule;
+            //     this.saveUserColorScheme(underlyingColorScheme);
+            // }
         }
         // await this._storageManager.set(this._defaultSettings);
         this.renameSettingsToDefault(this._defaultSettings);

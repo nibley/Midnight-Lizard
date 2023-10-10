@@ -229,9 +229,9 @@ class PopupManager
         this._setAsDefaultButton.onclick = this.setAsDefaultSettings.bind(this);
 
         this._colorSchemeForEdit.onchange = this.onColorSchemeForEditChanged.bind(this);
-        this._deleteColorSchemeButton.onclick = this.deleteUserColorScheme.bind(this);
-        this._hiddenSaveColorSchemeButton.onclick =
-            this._saveColorSchemeButton.onclick = this.saveUserColorScheme.bind(this);
+        // this._deleteColorSchemeButton.onclick = this.deleteUserColorScheme.bind(this);
+        // this._hiddenSaveColorSchemeButton.onclick =
+            // this._saveColorSchemeButton.onclick = this.saveUserColorScheme.bind(this);
         this._newColorSchemeName.oninput = this.updateColorSchemeButtons.bind(this);
         this._exportColorSchemeButton.onclick = this.exportColorScheme.bind(this);
         this._importColorSchemeFileInput.onchange = this.importColorSchemes.bind(this);
@@ -499,12 +499,12 @@ class PopupManager
             }
         }
 
-        this._publicSettingsManager.getInstalledPublicColorSchemeIds()
-            .then(publicColorSchemeIds =>
-            {
-                this.setPublicSchemePrefixToOptions(this._colorSchemeForEdit, publicColorSchemeIds);
-                this.setPublicSchemePrefixToOptions(this._colorSchemeSelect, publicColorSchemeIds);
-            });
+        // this._publicSettingsManager.getInstalledPublicColorSchemeIds()
+        //     .then(publicColorSchemeIds =>
+        //     {
+        //         this.setPublicSchemePrefixToOptions(this._colorSchemeForEdit, publicColorSchemeIds);
+        //         this.setPublicSchemePrefixToOptions(this._colorSchemeSelect, publicColorSchemeIds);
+        //     });
     }
 
     protected setPublicSchemePrefixToOptions(select: HTMLSelectElement, publicColorSchemeIds: ColorSchemeId[])
@@ -638,57 +638,57 @@ class PopupManager
         return false;
     }
 
-    protected saveUserColorScheme(e: Event)
-    {
-        const colorSchemeForEditName = this._colorSchemeForEdit.value !== CustomColorSchemeId
-            ? ColorSchemes[this._colorSchemeForEdit.value as ColorSchemeId].colorSchemeName : "";
-        if (this._colorSchemeForEdit.value === CustomColorSchemeId ||
-            e.target && e.target instanceof HTMLButtonElement &&
-            e.target.id === this._hiddenSaveColorSchemeButton.id ||
-            confirm(this._i18n.getMessage("colorSchemeSaveConfirmationMessage",
-                colorSchemeForEditName, this._newColorSchemeName.value)))
-        {
-            const newScheme = Object.assign({}, this._settingsManager.currentSettings);
-            newScheme.colorSchemeId = this._colorSchemeForEdit.value as ColorSchemeId;
-            newScheme.colorSchemeName = this._newColorSchemeName.value;
-            if (this._colorSchemeForEdit.value === CustomColorSchemeId)
-            {
-                newScheme.colorSchemeId = guid("") as ColorSchemeId;
-            }
-            this._settingsManager.saveUserColorScheme(newScheme)
-                .then(async (x) =>
-                {
-                    this._settingsManager.changeSettings(newScheme);
-                    await this.updateColorSchemeListsFromDefaultSettings();
-                })
-                .catch(async ex =>
-                {
-                    const reason = await this._settingsManager.getErrorReason(ex);
-                    alert(this._i18n.getMessage("colorSchemeSaveFailureMessage") + reason);
-                });
-        }
-        if (e.target && e.target instanceof HTMLButtonElement &&
-            e.target.id === this._hiddenSaveColorSchemeButton.id)
-        {
-            setTimeout(() => this._popup.location.reload(), 100);
-        }
-        return false;
-    }
+    // protected saveUserColorScheme(e: Event)
+    // {
+    //     const colorSchemeForEditName = this._colorSchemeForEdit.value !== CustomColorSchemeId
+    //         ? ColorSchemes[this._colorSchemeForEdit.value as ColorSchemeId].colorSchemeName : "";
+    //     if (this._colorSchemeForEdit.value === CustomColorSchemeId ||
+    //         e.target && e.target instanceof HTMLButtonElement &&
+    //         e.target.id === this._hiddenSaveColorSchemeButton.id ||
+    //         confirm(this._i18n.getMessage("colorSchemeSaveConfirmationMessage",
+    //             colorSchemeForEditName, this._newColorSchemeName.value)))
+    //     {
+    //         const newScheme = Object.assign({}, this._settingsManager.currentSettings);
+    //         newScheme.colorSchemeId = this._colorSchemeForEdit.value as ColorSchemeId;
+    //         newScheme.colorSchemeName = this._newColorSchemeName.value;
+    //         if (this._colorSchemeForEdit.value === CustomColorSchemeId)
+    //         {
+    //             newScheme.colorSchemeId = guid("") as ColorSchemeId;
+    //         }
+    //         this._settingsManager.saveUserColorScheme(newScheme)
+    //             .then(async (x) =>
+    //             {
+    //                 this._settingsManager.changeSettings(newScheme);
+    //                 await this.updateColorSchemeListsFromDefaultSettings();
+    //             })
+    //             .catch(async ex =>
+    //             {
+    //                 const reason = await this._settingsManager.getErrorReason(ex);
+    //                 alert(this._i18n.getMessage("colorSchemeSaveFailureMessage") + reason);
+    //             });
+    //     }
+    //     if (e.target && e.target instanceof HTMLButtonElement &&
+    //         e.target.id === this._hiddenSaveColorSchemeButton.id)
+    //     {
+    //         setTimeout(() => this._popup.location.reload(), 100);
+    //     }
+    //     return false;
+    // }
 
-    protected deleteUserColorScheme()
-    {
-        if (confirm(this._i18n.getMessage("colorSchemeDeleteConfirmationMessage",
-            ColorSchemes[this._colorSchemeForEdit.value as ColorSchemeId].colorSchemeName)))
-        {
-            const colorSchemeId = this._colorSchemeForEdit.value as ColorSchemeId;
-            this._settingsManager.deleteUserColorScheme(colorSchemeId)
-                // TODO: the next line should be removed when there will be a special UI for Public Schemes deletion
-                .then(x => this._publicSettingsManager.uninstallPublicSchemeByColorSchemeId(colorSchemeId))
-                .then(x => this.updateColorSchemeListsFromDefaultSettings())
-                .catch(ex => alert(this._i18n.getMessage("colorSchemeDeleteFailureMessage") + (ex.message || ex)));
-        }
-        return false;
-    }
+    // protected deleteUserColorScheme()
+    // {
+    //     if (confirm(this._i18n.getMessage("colorSchemeDeleteConfirmationMessage",
+    //         ColorSchemes[this._colorSchemeForEdit.value as ColorSchemeId].colorSchemeName)))
+    //     {
+    //         const colorSchemeId = this._colorSchemeForEdit.value as ColorSchemeId;
+    //         this._settingsManager.deleteUserColorScheme(colorSchemeId)
+    //             // TODO: the next line should be removed when there will be a special UI for Public Schemes deletion
+    //             .then(x => this._publicSettingsManager.uninstallPublicSchemeByColorSchemeId(colorSchemeId))
+    //             .then(x => this.updateColorSchemeListsFromDefaultSettings())
+    //             .catch(ex => alert(this._i18n.getMessage("colorSchemeDeleteFailureMessage") + (ex.message || ex)));
+    //     }
+    //     return false;
+    // }
 
     protected async updateColorSchemeListsFromDefaultSettings()
     {

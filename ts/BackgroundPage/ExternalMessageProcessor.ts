@@ -31,9 +31,9 @@ export class ExternalMessageProcessor implements IExternalMessageProcessor
 
     private async sendInstalledPublicSchemesBackTo(port: any)
     {
-        this.messageBus.postMessage(port,
-            new PublicSchemesChanged(
-                await this.publicSettingsManager.getInstalledPublicSchemeIds()));
+        // this.messageBus.postMessage(port,
+        //     new PublicSchemesChanged(
+        //         await this.publicSettingsManager.getInstalledPublicSchemeIds()));
     }
 
     private async processMessage(msg?: { port: any, message: MessageToBackgroundPage })
@@ -46,23 +46,23 @@ export class ExternalMessageProcessor implements IExternalMessageProcessor
                 switch (message.type)
                 {
                     case MessageType.GetInstalledPublicSchemes:
-                        await this.sendInstalledPublicSchemesBackTo(port);
+                        // await this.sendInstalledPublicSchemesBackTo(port);
                         break;
 
                     case MessageType.InstallPublicScheme:
-                        await this.publicSettingsManager.installPublicScheme(message.publicScheme);
+                        // await this.publicSettingsManager.installPublicScheme(message.publicScheme);
                         break;
 
                     case MessageType.UninstallPublicScheme:
-                        await this.publicSettingsManager.uninstallPublicScheme(message.publicSchemeId);
+                        // await this.publicSettingsManager.uninstallPublicScheme(message.publicSchemeId);
                         break;
 
                     case MessageType.ApplyPublicScheme:
-                        await this.publicSettingsManager.applyPublicScheme(message.publicSchemeId, message.hostName);
+                        // await this.publicSettingsManager.applyPublicScheme(message.publicSchemeId, message.hostName);
                         break;
 
                     case MessageType.SetPublicSchemeAsDefault:
-                        await this.publicSettingsManager.setPublicSchemeAsDefault(message.publicSchemeId);
+                        // await this.publicSettingsManager.setPublicSchemeAsDefault(message.publicSchemeId);
                         break;
 
                     default:
