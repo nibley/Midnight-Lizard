@@ -6,7 +6,7 @@ import { ChromePromise } from "./ChromePromise";
 @injectable(IApplicationInstaller)
 export class ChromeApplicationInstaller implements IApplicationInstaller
 {
-    private readonly printError = (er: any) => this._app.isDebug && console.error(er.message || er);
+    private readonly printError = (er: any) => this._app.isDebug && console.log(er.message || er);
 
     constructor(
         protected readonly _chromePromise: ChromePromise,
